@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ماشین حساب</title>
+<style>
+body{
+  margin:0;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#111;
+  font-family:sans-serif;
+  color:#fff;
+}
+.app{
+  width:min(360px,92vw);
+  background:#1c1c1c;
+  padding:16px;
+  border-radius:24px;
+  box-shadow:0 10px 30px rgba(0,0,0,.45);
+}
+#screen{
+  direction:ltr;
+  min-height:84px;
+  background:#000;
+  border-radius:16px;
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  padding:0 16px;
+  font-size:2rem;
+  margin-bottom:14px;
+  overflow:auto;
+}
+.keys{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+}
+button{
+  height:64px;
+  border:none;
+  border-radius:16px;
+  background:#2d2d2d;
+  color:#fff;
+  font-size:1.35rem;
+}
+button.op{background:#454545}
+button.clear{background:#b71c1c}
+button.eq{
+  grid-column:span 4;
+  background:#2e7d32;
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div id="screen"></div>
+  <div class="keys"></div>
+</div>
+
+<script>
+const screen = document.getElementById("screen");
+const keys = document.querySelector(".keys");
+
+const buttons = [
+  "7","8","9","/",
+  "4","5","6","*",
+  "1","2","3","-",
+  "0",".","C","+",
+  "="
+];
+
+for (const text of buttons) {
+  const btn = document.createElement("button");
+  btn.textContent = text;
+
+  if (text === "C") btn.className = "clear";
+  if (text === "=") btn.className = "eq";
+  if (["/","*","-","+"].includes(text)) btn.className = "op";
+
+  btn.onclick = () => {
+    if (text === "C") {
+      screen.textContent = "";
+      return;
+    }
+
+    if (text === "=") {
+      try {
+        const result = Function('"use strict"; return (' + screen.textContent + ')')();
+        screen.textContent = result;
+      } catch {
+        screen.textContent = "خطا";
+      }
+      return;
+    }
+
+    if (screen.textContent === "خطا") {
+      screen.textContent = "";
+    }
+
+    screen.textContent += text;
+  };
+
+  keys.appendChild(btn);
+}
+</script>
+
+</body>
+</html>
